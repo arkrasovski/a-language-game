@@ -1,4 +1,6 @@
-using System;
+﻿using System;
+using System.Globalization;
+using System.Text;
 
 namespace LanguageGame
 {
@@ -22,9 +24,91 @@ namespace LanguageGame
         /// "Smile" -> "Ilesmay"
         /// "Glove" -> "Oveglay"
         /// </example>
+        /// 
+        public static string TranslateWord(string word)
+        {
+            StringBuilder sb = new StringBuilder();
+            char firstLetter = char.ToLower(word[0], CultureInfo.CurrentCulture);
+            if (firstLetter == 'a' || firstLetter == 'o' || firstLetter == 'u' || firstLetter == 'e' || firstLetter == 'i')
+            {
+                sb.Append(word);
+                sb.Append("yay");
+            }
+            else
+            {
+                StringBuilder buffer = new StringBuilder();
+                int i = 0;
+                try
+                {
+                    while (word[i] != 'a' && word[i] != 'o' && word[i] != 'u' && word[i] != 'e' && word[i] != 'i')
+                    {
+                        buffer.Append(word[i]);
+                        i++;
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("its not a word");
+                    if (word.Length > 1) 
+                    { 
+                        return word + "ay"; 
+                    }
+
+                    return word;
+                    
+                }
+
+                sb.Append(word);
+                sb.Remove(0, i);
+                char punctSign = '\0';
+                if (word[word.Length - 1] == '!' || word[word.Length - 1] == ',' || word[word.Length - 1] == '.')
+                {
+                    punctSign = word[word.Length - 1];
+                    sb.Remove(sb.Length - 1, 1);
+                }
+                sb.Append(buffer.ToString().ToLower(CultureInfo.CurrentCulture));
+                sb.Append("ay");
+                if (word[word.Length - 1] == '!' || word[word.Length - 1] == ',' || word[word.Length - 1] == '.')
+                    sb.Append(punctSign);
+                if ((int)word[0] > 64 && (int)word[0] < 91)
+                {
+                    sb.Remove(0, 1);
+                    sb.Insert(0, char.ToUpper(word[i], CultureInfo.CurrentCulture));
+                }
+            }
+
+            return sb.ToString();
+        }
+
         public static string TranslateToPigLatin(string phrase)
         {
-            throw new NotImplementedException("You need to implement this method.");
+
+            Console.WriteLine(phrase);
+            if (phrase == null)
+            {
+                throw new ArgumentException("string cannot be null");
+            }
+            
+            if (phrase.Length == 0)
+            {
+                throw new ArgumentException("string cannot be empty");
+            }
+
+            if (phrase.Replace(" ", string.Empty, 0).Length == 0)
+            {
+                throw new ArgumentException("string cannot be whitespace");
+            }
+
+            string[] arr = phrase.Split(' ');
+
+            for (int i = 0; i < arr.Length; i++)
+            {
+                arr[i] = TranslateWord(arr[i]);
+            }
+            Console.WriteLine(string.Join(' ', arr));
+
+            return string.Join(' ', arr) ;
+            
         }
     }
 }
